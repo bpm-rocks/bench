@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include bench
+
+bench::test::no-function-call() {
+    echo "This is just an echo" > /dev/null
+}
+
+log() {
+    echo "This is just an echo" > /dev/null
+}
+
+bench::test::calling-a-function() {
+    log
+}
+
+log2() {
+    echo "$1" > /dev/null
+}
+
+bench::test::calling-a-function-with-argument() {
+    log2 "This is just an echo"
+}
+
+bench::auto

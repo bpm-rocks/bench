@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include bench
+
+bench::test::let() {
+    let "someInteger=0"
+}
+
+bench::test::assign() {
+    someInteger=0
+}
+
+bench::auto

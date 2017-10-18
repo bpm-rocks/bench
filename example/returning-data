@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include bench
+
+echoData() {
+    echo "This is data"
+}
+
+# Pro: A lot of things send data to stdout or stderr.
+# Con: Difficult to ensure that commands don't accidentally output additional
+#      lines of data.
+bench::test::subshell() {
+    local x
+    x=$(echoData)
+}
+
+assignData() {
+    local "${1-}" && assign::value "$1" "This is data"
+}
+
+# Pro: Assigns data to any variable.
+# Pro: No variable conflicts.
+# Con: Slower than using global variables.
+bench::test::assign() {
+    local x
+    assignData x
+}
+
+globalData() {
+    retval="This is data"
+}
+
+# Pro: Fast.
+# Con: Uses a global variable, which could be problematic if any other
+#      library function wishes to use the same variable.
+bench::test::global-variable() {
+    local x
+    globalData
+
+    # shellcheck disable=SC2034
+    x=$retval
+}
+
+bench::auto

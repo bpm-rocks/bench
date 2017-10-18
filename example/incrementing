@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include bench
+
+bench::test::as-variable() {
+    a=1
+    a=$((a+1))
+}
+
+bench::test::as-math-plus-plus() {
+    a=1
+    ((a++))
+}
+
+bench::test::as-math-plus-equals() {
+    a=1
+    ((a+=1))
+}
+
+bench::test::as-let-assign() {
+    a=1
+    let "a=a+1"
+}
+
+bench::test::as-let-plus-plus() {
+    a=1
+    let "a++"
+}
+
+bench::test::as-let-plus-equals() {
+    a=1
+    let "a+=1"
+}
+
+bench::auto

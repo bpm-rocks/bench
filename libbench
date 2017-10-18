@@ -1,0 +1,99 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include assign
+bpm::include time
+
+# Automatically benchmark functions that start with `bench::test::*` and
+# writes the results to stdout.
+#
+# Examples
+#
+#    bench::test::echo-nothing() {
+#        echo -n ""
+#    }
+#    bench::auto
+#
+# Returns nothing, even if there are no functions to test.
+bench::auto() {
+    local names result testName
+
+    names=$(declare -F | sed "s/^declare -f //" | grep "^bench::test::")
+
+    if [[ -n "$names" ]]; then
+        for testName in $names; do
+            bench::test result "$testName"
+            echo "$testName: ${result[0]} sec, ${result[1]} op/sec"
+        done
+    fi
+}
+
+
+# Benchmark shell functions or commands, running them repeatedly until an
+# accurate measurement of their execution time is available.
+#
+# $1   - Name of variable to get the results. This is an array with the
+#        amount of seconds (floating point) as the first value and the
+#        operations per second (another floating point number) as the
+#        second element in the array.
+# $2-@ - The command to run. This can be an alias, function, or another shell
+#        command.
+#
+# Examples
+#
+#   # Determining which one is faster.
+#   method1() {
+#       if [[ -f some-file ]]; then
+#           return 1
+#       fi
+#       return 0
+#   }
+#   method2() {
+#       [[ ! -f some-file ]]
+#   }
+#   bench::test result method1
+#   echo "Method 1: ${result[0]} seconds, ${result[1]} op/sec"
+#   bench::test result method2
+#   echo "Method 2: ${result[0]} seconds, ${result[1]} op/sec"
+#
+# Returns nothing. Even if the function returns errors, this continues to
+# trudge on and will ignore the return code of the function being called.
+bench::test() {
+    local averageTime bench_iterations elapsedTime endTime opsPerSec target startTime
+
+    target=${1-}
+    shift
+
+    #: Start by faking the numbers of 1 iteration in 1 second. This will kick
+    #: off the process by running the loop 5 times initially.
+    bench_iterations=1
+    elapsedTime=1
+
+    while [[ "${elapsedTime%.*}" -lt 5 ]]; do
+        #: Try to adjust the iterations to take about 10% longer than
+        #: our target time.
+        bench_iterations="$(echo "scale=0; $bench_iterations / $elapsedTime * (1.1 * 5)" | bc)"
+        bench_iterations="${bench_iterations%%.*}"
+        time::stampHr startTime
+
+        # Execute in a subshell to avoid clashes in variable names. The only
+        # variables the test must avoid using are bench_iteration_number and
+        # bench_iterations.
+        (
+            local bench_iteration_number
+
+            for ((bench_iteration_number=0; bench_iteration_number<bench_iterations; bench_iteration_number++)); do
+                "$@" || :
+            done
+        )
+
+        time::stampHr endTime
+        time::stampDiff elapsedTime "$startTime" "$endTime"
+    done
+
+    #: Calculate average time per call and number of operations per second.
+    averageTime="$(echo "scale=9; $elapsedTime / $bench_iterations" | bc)"
+    opsPerSec="$(echo "scale=9; $bench_iterations / $elapsedTime" | bc)"
+
+    local "$target" && assign::array "$target" "$averageTime" "$opsPerSec"
+}

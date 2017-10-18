@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+. bpm
+bpm::include bench
+
+bench::test::combined() {
+    export loop
+    for loop in {1..1000}; do
+        true && echo "" > /dev/null
+        false && echo "" > /dev/null
+        ! true && echo "" > /dev/null
+        ! false && echo "" > /dev/null
+    done
+}
+
+bench::test::if() {
+    export loop
+    for loop in {1..1000}; do
+        if true; then
+            echo "" > /dev/null
+        fi
+        if false; then
+            echo "" > /dev/null
+        fi
+        if ! true; then
+            echo "" > /dev/null
+        fi
+        if ! false; then
+            echo "" > /dev/null
+        fi
+    done
+}
+
+bench::auto

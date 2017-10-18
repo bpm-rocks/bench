@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+. bpm
+bpm::include bench
+
+bench::test::shell-pwd() {
+    local x
+    x="$(cd ..; pwd)"
+}
+
+bench::test::shell-env() {
+    local x
+    x="$(cd ..; echo "$PWD")"
+}
+
+bench::test::env() {
+    local oldPwd x
+    oldPwd=$PWD
+    cd ..
+    x=$PWD
+    cd "$oldPwd"
+}
+
+bench::test::env-pwd() {
+    local oldPwd x
+    oldPwd=$PWD
+    cd ..
+    x=$(pwd)
+    cd "$oldPwd"
+}
+
+bench::test::pushd() {
+    local x
+    pushd .. &> /dev/null
+    x=$PWD
+    popd &> /dev/null
+}
+
+bench::auto

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+. bpm
+bpm::include bench
+
+bench::test::arithmetic() {
+    local i
+    for ((i=0; i<1000; i++)); do
+        :
+    done
+}
+
+bench::test::brace-expansion() {
+    local i
+    for i in {1..1000}; do
+        :
+    done
+}
+
+bench::test::subshell-seq() {
+    local i
+    for i in $(seq 1 1000); do
+        :
+    done
+}
+
+bench::auto
