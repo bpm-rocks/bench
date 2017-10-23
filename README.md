@@ -7,7 +7,7 @@ Run a function repeatedly in order to gauge its performance. Compare the results
 Installation
 ============
 
-Add to your `bpm.ini` file, the following development dependency. It is unlikely that you will rely on this library for non-development systems.
+Add to your `bpm.ini` file the following development dependency. It is unlikely that you will rely on this library for non-development systems.
 
     [devDependencies]
     bench=*
