@@ -10,7 +10,7 @@ Installation
 Add to your `bpm.ini` file the following development dependency. It is unlikely that you will rely on this library for non-development systems.
 
     [devDependencies]
-    0=bench
+    bench=*
 
 Run `bpm install` to add the library. Finally, use it in your testing scripts.
 
