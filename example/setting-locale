@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
+
+makeTest() {
+    eval "bench::test::$1() { $2; }"
+}
+
+generateForEnv() {
+    local scenario guts
+
+    scenario=$1
+    guts=$2
+    makeTest "echo-$scenario" "$guts; echo \"test\" > /dev/null"
+    makeTest "if-equals-$scenario" "$guts; if [[ this == that ]]; then :; fi"
+    makeTest "string-modification-$scenario" "$guts; x=${PATH%:*}"
+    makeTest "if-regex-$scenario" "$guts; if [[ a_long_string_goes_here =~ strings ]]; then :; fi"
+}
+
+generateForEnv "neither" "ENV1= ENV2="
+generateForEnv "lc-all" "LC_ALL=C ENV2="
+generateForEnv "lang" "ENV1= LANG=C"
+generateForEnv "both" "LC_ALL=C LANG=C"
+
+bench::auto

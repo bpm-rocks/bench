@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+#
+# Based on example script from Erik Brandsberg for testing execution time of
+# certain operations.
+#  https://www.tldp.org/LDP/abs/html/optimizations.html
+#  https://www.tldp.org/LDP/abs/html/contributed-scripts.html#TESTEXECTIME
+
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
+
+counter=0
+
+bench::test::case-no-quotes() {
+    case $(( counter%2 )) in
+        0) : ;;
+        1) : ;;
+    esac
+    (( counter++ ))
+}
+
+bench::test::case-with-quotes() {
+    case $(( counter%2 )) in
+        "0") : ;;
+        "1") : ;;
+    esac
+    (( counter++ ))
+}
+
+bench::test::single-brackets-no-quotes() {
+    if [ $(( counter%2 )) = 0 ]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::test::single-brackets-with-quotes() {
+    if [ "$(( counter%2 ))" = "0" ]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::test::single-brackets-eq() {
+    if [ $(( counter%2 )) -eq 0 ]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::test::double-brackets-no-quotes() {
+    if [[ $(( counter%2 )) = 0 ]]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::test::double-brackets-with-quotes() {
+    if [[ "$(( counter%2 ))" = "0" ]]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::test::double-brackets-eq() {
+    if [[ $(( counter%2 )) -eq 0 ]]; then : ; else : ; fi
+    (( counter++ ))
+}
+
+bench::auto

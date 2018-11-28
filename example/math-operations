@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+#
+# Based on example script from Erik Brandsberg for testing execution time of
+# certain operations.
+#  https://www.tldp.org/LDP/abs/html/optimizations.html
+#  https://www.tldp.org/LDP/abs/html/contributed-scripts.html#TESTEXECTIME
+
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
+
+counter=0
+
+bench::test::double-parenthesis() {
+    # shellcheck disable=SC2004
+    result=$(( $counter%2 ))
+    (( counter++ ))
+}
+
+bench::test::double-parenthesis-no-dollar() {
+    result=$(( counter%2 ))
+    (( counter++ ))
+}
+
+bench::test::expr() {
+    # shellcheck disable=SC2003
+    result=$(expr "$counter%2")
+    (( counter++ ))
+}
+
+bench::test::let() {
+    # shellcheck disable=SC2219 disable=SC2034
+    let result=$counter%2
+    (( counter++ ))
+}
+
+bench::auto
