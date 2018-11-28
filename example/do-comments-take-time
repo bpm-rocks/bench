@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # 1000 comment lines per function
 
-. bpm
-bpm::include bench
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
 
 bench::test::many-before-return() {
     # This is a comment! Comments are amazing.

@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-. bpm
-bpm::include bench
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
 
 bench::test::as-variable() {
     a=1
@@ -20,16 +22,19 @@ bench::test::as-math-plus-equals() {
 
 bench::test::as-let-assign() {
     a=1
+    # shellcheck disable=SC2219
     let "a=a+1"
 }
 
 bench::test::as-let-plus-plus() {
     a=1
+    # shellcheck disable=SC2219
     let "a++"
 }
 
 bench::test::as-let-plus-equals() {
     a=1
+    # shellcheck disable=SC2219
     let "a+=1"
 }
 

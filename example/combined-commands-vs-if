@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-. bpm
-bpm::include bench
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
 
 bench::test::combined() {
     export loop

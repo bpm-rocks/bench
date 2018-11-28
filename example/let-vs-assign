@@ -1,13 +1,17 @@
 #!/usr/bin/env bash
 
-. bpm
-bpm::include bench
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
 
 bench::test::let() {
+    # shellcheck disable=SC2219
     let "someInteger=0"
 }
 
 bench::test::assign() {
+    # shellcheck disable=SC2034
     someInteger=0
 }
 

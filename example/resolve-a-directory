@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
-. bpm
-bpm::include bench
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
 
 bench::test::shell-pwd() {
     local x
@@ -17,6 +19,7 @@ bench::test::env() {
     oldPwd=$PWD
     cd ..
     x=$PWD
+    # shellcheck disable=SC2164
     cd "$oldPwd"
 }
 
@@ -25,13 +28,16 @@ bench::test::env-pwd() {
     oldPwd=$PWD
     cd ..
     x=$(pwd)
+    # shellcheck disable=SC2164
     cd "$oldPwd"
 }
 
 bench::test::pushd() {
     local x
     pushd .. &> /dev/null
+    # shellcheck disable=SC2034
     x=$PWD
+    # shellcheck disable=SC2164
     popd &> /dev/null
 }
 
