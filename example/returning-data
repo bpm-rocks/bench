@@ -23,7 +23,7 @@ assignData() {
 
 # Pro: Assigns data to any variable.
 # Pro: No variable conflicts.
-# Con: Slower than using global variables.
+# Con: Only moderate speed.
 bench::test::assign() {
     local x
     assignData x
@@ -33,7 +33,7 @@ globalData() {
     retval="This is data"
 }
 
-# Pro: Fast.
+# Pro: Fastest.
 # Con: Uses a global variable, which could be problematic if any other
 #      library function wishes to use the same variable.
 bench::test::global-variable() {
@@ -42,6 +42,30 @@ bench::test::global-variable() {
 
     # shellcheck disable=SC2034
     x=$retval
+}
+
+evalData() {
+    eval "$1='This is data'"
+}
+
+# Pro: Fairly fast.
+# Con: Returned variable name may conflict with variables in callee.
+bench::test::eval() {
+    # shellcheck disable=SC2034
+    local x
+    evalData x
+}
+
+printfData() {
+    printf -v "$1" "This is data"
+}
+
+# Pro: Fairly fast.
+# Con: Returned variable name may conflict with variables in callee.
+bench::test::printf() {
+    # shellcheck disable=SC2034
+    local x
+    printfData x
 }
 
 bench::auto
