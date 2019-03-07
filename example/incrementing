@@ -20,6 +20,11 @@ bench::test::as-math-plus-equals() {
     ((a+=1))
 }
 
+bench::test::as-math-assignment() {
+    a=1
+    ((a=a+1))
+}
+
 bench::test::as-let-assign() {
     a=1
     # shellcheck disable=SC2219
