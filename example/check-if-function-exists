@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+cd "${0%/*}" || exit 1
+
+# shellcheck disable=SC1091
+. ../libbench
+
+someFunction() {
+    :
+}
+
+bench::test::test() {
+    [[ "$(type -t "someFunction" || :)" == "function" ]]
+    [[ "$(type -t "notSomeFunction" || :)" == "function" ]] || :
+}
+
+bench::test::declare() {
+    declare -Ff "someFunction" > /dev/null
+    declare -Ff "notSomeFunction" > /dev/null || :
+}
+
+bench::auto
